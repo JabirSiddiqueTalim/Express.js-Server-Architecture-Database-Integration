@@ -11,9 +11,19 @@ app.get('/', (req:Request, res:Response) => {
   })
 })
 app.use(express.json())
+app.use(express.text())
+app.use(express.urlencoded({extended:true}))
 app.post('/',async(req:Request,res:Response)=>
 {
-  console.log(req.body);
+  // console.log(req.body);
+  const body=req.body;
+  
+  res.status(202).json(
+    {
+      message:"Data post finlay",
+      data:body,
+    }
+  )
 
 }
 )
