@@ -44,7 +44,7 @@ app.use(express.json())
 app.use(express.text())
 app.use(express.urlencoded({ extended: true }))
 
-app.post('/', async (req: Request, res: Response) => {
+app.post('/api/users', async (req: Request, res: Response) => {
   // console.log(req.body);
   const { name,  email, password,age } = req.body;
   try {
@@ -76,6 +76,32 @@ app.post('/', async (req: Request, res: Response) => {
 
 }
 )
+app.get('/api/users', async (req: Request, res: Response) => {
+  const result = await pool.query(`
+    SELECT * FROM users;
+  `)
+  try {
+    res.status(202).json(
+      {
+        message: "Data post successfully",
+        data: result.rows
+
+      }
+    )
+
+
+    
+  } catch (error:any) {
+    res.status(500).json(
+      {
+        message: error.message,
+        error:error
+
+      }
+    )
+    
+  }
+})
 
 app.listen(port, () => {
   console.log(`Example app listening On port ${port}`)
