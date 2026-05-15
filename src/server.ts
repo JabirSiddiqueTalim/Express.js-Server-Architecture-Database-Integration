@@ -5,7 +5,7 @@ const app: Application = express();
 const port = 5000
 
 const pool = new Pool({
-  connectionString: "postgresql://neondb_owner:npg_VYZEFvq7Np8A@ep-withered-smoke-aqgywwx4.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require"
+  connectionString: "postgresql://neondb_owner:npg_VYZEFvq7Np8A@ep-withered-smoke-aqgywwx4-pooler.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 })
 const initDB = async () => {
   try {
@@ -23,7 +23,7 @@ const initDB = async () => {
       )
       
       `)
-      console.log("Database connected!!!!")
+    console.log("Database connected!!!!")
 
   } catch (error) {
     console.log(error);
@@ -46,12 +46,19 @@ app.use(express.urlencoded({ extended: true }))
 
 app.post('/', async (req: Request, res: Response) => {
   // console.log(req.body);
-  const body = req.body;
-
+  const { name, age, email, password } = req.body;
+  const result = await pool.query(`
+    INSERT INTO users(name ,email,password,age) VALUES($1,$2,$3,$4)
+    RETURNING *
+    `,
+    [name, age, email, password],
+  );
+  console.log(result)
   res.status(202).json(
     {
       message: "Data post finlay",
-      data: body,
+      data: result.rows[0]
+
     }
   )
 }
