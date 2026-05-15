@@ -13,7 +13,7 @@ const initDB = async () => {
       CREATE TABLE IF NOT EXISTS users(
       id SERIAL PRIMARY KEY,
       name VARCHAR(20),
-      email VARCHAR(30) NOT NULL,
+      email VARCHAR(30) UNIQUE NOT NULL,
       password VARCHAR(20) NOT NULL,
       is_active BOOLEAN DEFAULT true,
       age INT,
@@ -23,7 +23,7 @@ const initDB = async () => {
       )
       
       `)
-    console.log("Database connected!!!!")
+    // console.log("Database connected!!!!")
 
   } catch (error) {
     console.log(error);
@@ -46,21 +46,34 @@ app.use(express.urlencoded({ extended: true }))
 
 app.post('/', async (req: Request, res: Response) => {
   // console.log(req.body);
-  const { name, age, email, password } = req.body;
-  const result = await pool.query(`
-    INSERT INTO users(name ,email,password,age) VALUES($1,$2,$3,$4)
-    RETURNING *
-    `,
-    [name, age, email, password],
-  );
-  console.log(result)
-  res.status(202).json(
-    {
-      message: "Data post finlay",
-      data: result.rows[0]
+  const { name,  email, password,age } = req.body;
+  try {
+    const result = await pool.query(`
+      INSERT INTO users(name ,email,password,age) VALUES($1,$2,$3,$4)
+      RETURNING *
+      `,
+      [name,  email, password,age ],
+    );
+    console.log(result)
+    res.status(202).json(
+      {
+        message: "Data post successfully",
+        data: result.rows[0]
 
-    }
-  )
+      }
+    )
+
+  } catch (error:any) {
+    res.status(500).json(
+      {
+        message: error.message,
+        error:error
+
+      }
+    )
+
+  }
+
 }
 )
 
