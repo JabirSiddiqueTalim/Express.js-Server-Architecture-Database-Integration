@@ -24,10 +24,8 @@ const initDB = async () => {
       
       `)
     // console.log("Database connected!!!!")
-
   } catch (error) {
     console.log(error);
-
   }
 }
 initDB();
@@ -59,21 +57,16 @@ app.post('/api/users', async (req: Request, res: Response) => {
       {
         message: "Data post successfully",
         data: result.rows[0]
-
       }
     )
-
   } catch (error: any) {
     res.status(500).json(
       {
         message: error.message,
         error: error
-
       }
     )
-
   }
-
 }
 )
 app.get('/api/users', async (req: Request, res: Response) => {
@@ -85,35 +78,27 @@ app.get('/api/users', async (req: Request, res: Response) => {
       {
         message: "Data post successfully",
         data: result.rows
-
       }
     )
-
-
-
   } catch (error: any) {
     res.status(500).json(
       {
         message: error.message,
         error: error
-
       }
     )
-
   }
 })
 app.get('/api/users/:id', async (req: Request, res: Response) => {
-  const id = req.params;
-  console.log(id);
-  //    SELECT * FROM Customers
-  // WHERE Country = 'Mexico';
+  const {id} = req.params;
+  // console.log(id);
   const result = await pool.query(`
   SELECT * FROM users WHERE id=$1;
 `, [req.params.id]);
-  console.log(result);
+  // console.log(result);
   try {
     if (result.rows.length === 0) {
-      res.status(500).json({
+      res.status(404).json({
         message: "User not found",
         success: false,
         data: {}
@@ -122,7 +107,7 @@ app.get('/api/users/:id', async (req: Request, res: Response) => {
     res.status(200).json({
       message: "User found successfully",
       success: true,
-      data:result.rows[0]
+      data: result.rows[0]
     })
 
   } catch (error: any) {
@@ -130,9 +115,47 @@ app.get('/api/users/:id', async (req: Request, res: Response) => {
       {
         message: error.message,
         error: error
-
       }
     )
+  }
+})
+//PUT
+app.put('/api/users/:id', async (req: Request, res: Response) =>
+{
+  const {id}=req.params;
+  const { name, password, age } = req.body;
+  // const result = await pool.query(`
+  //   SELECT * FROM users WHERE id=$1;
+  // `, [req.params.id]);
+  const result = await pool.query(`
+    UPDATE users SET name=$1,password=$2,age=$3 
+    WHERE id=$4
+    RETURNING *;
+  `,[name,password,age,req.params.id])
+   console.log(result);
+  try {
+    // if (result.rows.length === 0) {
+    //   res.status(404).json({
+    //     message: "User not found",
+    //     success: false,
+    //     data: {}
+    //   })
+    // }
+    res.status(200).json({
+      message: "User Update successfully",
+      success: true,
+      data: result.rows[0]
+    })
+
+    
+  } catch (error:any) {
+    res.status(500).json(
+      {
+        message: error.message,
+        error: error
+      }
+    )
+    
   }
 })
 app.listen(port, () => {
