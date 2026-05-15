@@ -46,13 +46,13 @@ app.use(express.urlencoded({ extended: true }))
 
 app.post('/api/users', async (req: Request, res: Response) => {
   // console.log(req.body);
-  const { name,  email, password,age } = req.body;
+  const { name, email, password, age } = req.body;
   try {
     const result = await pool.query(`
       INSERT INTO users(name ,email,password,age) VALUES($1,$2,$3,$4)
       RETURNING *
       `,
-      [name,  email, password,age ],
+      [name, email, password, age],
     );
     console.log(result)
     res.status(202).json(
@@ -63,11 +63,11 @@ app.post('/api/users', async (req: Request, res: Response) => {
       }
     )
 
-  } catch (error:any) {
+  } catch (error: any) {
     res.status(500).json(
       {
         message: error.message,
-        error:error
+        error: error
 
       }
     )
@@ -90,19 +90,51 @@ app.get('/api/users', async (req: Request, res: Response) => {
     )
 
 
-    
-  } catch (error:any) {
+
+  } catch (error: any) {
     res.status(500).json(
       {
         message: error.message,
-        error:error
+        error: error
 
       }
     )
-    
+
   }
 })
+app.get('/api/users/:id', async (req: Request, res: Response) => {
+  const id = req.params;
+  console.log(id);
+  //    SELECT * FROM Customers
+  // WHERE Country = 'Mexico';
+  const result = await pool.query(`
+  SELECT * FROM users WHERE id=$1;
+`, [req.params.id]);
+  console.log(result);
+  try {
+    if (result.rows.length === 0) {
+      res.status(500).json({
+        message: "User not found",
+        success: false,
+        data: {}
+      })
+    }
+    res.status(200).json({
+      message: "User found successfully",
+      success: true,
+      data:result.rows[0]
+    })
 
+  } catch (error: any) {
+    res.status(500).json(
+      {
+        message: error.message,
+        error: error
+
+      }
+    )
+  }
+})
 app.listen(port, () => {
   console.log(`Example app listening On port ${port}`)
 })
