@@ -1,11 +1,12 @@
 import express, { type Application, type Request, type Response } from "express";
 import { json } from "node:stream/consumers";
 import { Pool } from "pg";
+import config from "./config";
 const app: Application = express();
-const port = 5000
+const port = config.port;
 
 const pool = new Pool({
-  connectionString: "postgresql://neondb_owner:npg_VYZEFvq7Np8A@ep-withered-smoke-aqgywwx4-pooler.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+  connectionString:config.connection_string,
 })
 const initDB = async () => {
   try {
@@ -164,9 +165,7 @@ app.put('/api/users/:id', async (req: Request, res: Response) => {
 app.delete('/api/users/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   const result = await pool.query(`
-   
     DELETE FROM users WHERE id=$1
-    
     `,[id])
     console.log(result);
     try {
@@ -190,7 +189,6 @@ app.delete('/api/users/:id', async (req: Request, res: Response) => {
           error: error
         }
       )
-  
     }
 })
 
