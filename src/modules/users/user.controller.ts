@@ -42,9 +42,35 @@ const createUser=
       )
     }
   }
-
+  const createGetSingle=async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+      const result= await userService.createGetSingleIntoDB(id as string);
+      if (result.rows.length === 0) {
+        res.status(404).json({
+          message: "User not found",
+          success: false,
+          data: {}
+        })
+      }
+      res.status(200).json({
+        message: "User found successfully",
+        success: true,
+        data: result.rows[0]
+      })
+  
+    } catch (error: any) {
+      res.status(500).json(
+        {
+          message: error.message,
+          error: error
+        }
+      )
+    }
+  }
   
 export const userController={
   createUser,
   createGetAll,
+  createGetSingle
 }
