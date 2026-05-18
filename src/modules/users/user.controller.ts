@@ -24,6 +24,27 @@ const createUser=
       )
     }
   }
+  const createGetAll=async (req: Request, res: Response) => {
+    const result =await  userService.createGetAllIntoDB()
+    try {
+      res.status(202).json(
+        {
+          message: "Data post successfully",
+          data: result.rows
+        }
+      )
+    } catch (error: any) {
+      res.status(500).json(
+        {
+          message: error.message,
+          error: error
+        }
+      )
+    }
+  }
+
+  
 export const userController={
   createUser,
+  createGetAll,
 }

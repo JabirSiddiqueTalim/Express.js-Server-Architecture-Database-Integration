@@ -13,6 +13,13 @@ const createUserIntoDB=async(payLoad:IUser)=>
   return result;
 
 }
+const createGetAllIntoDB=async()=>{
+  const result = await pool.query(`
+    SELECT * FROM users;
+  `)
+  return result;
+}
 export const userService={
   createUserIntoDB,
+  createGetAllIntoDB
 };
