@@ -40,9 +40,16 @@ const createPutIntoDB=async(payLoad:IUser,id:string)=>
   `, [name, password, age,id])
   return result;
 }
+const createDeleteIntoDB=async(id :string)=>{
+  const result = await pool.query(`
+    DELETE FROM users WHERE id=$1
+    `,[id])
+  return result;
+}
 export const userService={
   createUserIntoDB,
   createGetAllIntoDB,
   createGetSingleIntoDB,
-  createPutIntoDB
+  createPutIntoDB,
+  createDeleteIntoDB
 };

@@ -100,9 +100,38 @@ const createUser=
   
     }
   }
+const createDelete=async (req: Request, res: Response) => {
+    const { id } = req.params;
+    
+      // console.log(result);
+      try {
+        const result=await userService.createDeleteIntoDB(id as string)
+        if (result.rowCount === 0) {
+          res.status(404).json({
+            message: "User not found to delete",
+            success: false,
+          })
+        }
+        res.status(200).json({
+          message: "User Delete successfully",
+          success: true,
+          data:{},
+        })
+    
+    
+      } catch (error: any) {
+        res.status(500).json(
+          {
+            message: error.message,
+            error: error
+          }
+        )
+      }
+  }
 export const userController={
   createUser,
   createGetAll,
   createGetSingle,
-  createGetPut
+  createGetPut,
+  createDelete
 }
