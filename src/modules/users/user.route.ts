@@ -7,4 +7,5 @@ const router=Router();
 router.post('/', userController.createUser);
 router.get('/',userController.createGetAll )
 router.get('/:id',userController.createGetSingle )
+router.put('/:id', userController.createGetPut)
 export const userRouter=router;

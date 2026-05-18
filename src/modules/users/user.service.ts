@@ -25,8 +25,24 @@ const createGetSingleIntoDB=async(id :string)=>{
   `, [id]);
   return result;
 }
+const createPutIntoDB=async(payLoad:IUser,id:string)=>
+{
+  const {name, password, age}=payLoad;
+  // console.log(payLoad);
+  const result = await pool.query(`
+    UPDATE users 
+    SET
+     name=COALESCE($1,name),
+     password=COALESCE($2,password),
+     age=COALESCE($3 ,age) 
+    WHERE id=$4
+    RETURNING *;
+  `, [name, password, age,id])
+  return result;
+}
 export const userService={
   createUserIntoDB,
   createGetAllIntoDB,
-  createGetSingleIntoDB
+  createGetSingleIntoDB,
+  createPutIntoDB
 };

@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { pool } from "../../db";
 import { userService } from "./user.service";
+import strict from "assert/strict";
 
 const createUser=
   async (req: Request, res: Response)=> {
@@ -68,9 +69,40 @@ const createUser=
       )
     }
   }
+  const createGetPut=async (req: Request, res: Response) => {
+    const { id } = req.params;
+    // const { name, password, age } = req.body;
   
+    const result =await userService.createPutIntoDB(req.body,id as string)
+    console.log(result);
+    try {
+      if (result.rows.length === 0) {
+        res.status(404).json({
+          message: "User not found",
+          success: false,
+          data: {}
+        })
+      }
+      res.status(200).json({
+        message: "User Update successfully",
+        success: true,
+        data: result.rows[0]
+      })
+  
+  
+    } catch (error: any) {
+      res.status(500).json(
+        {
+          message: error.message,
+          error: error
+        }
+      )
+  
+    }
+  }
 export const userController={
   createUser,
   createGetAll,
-  createGetSingle
+  createGetSingle,
+  createGetPut
 }
