@@ -4,6 +4,7 @@ import { userController } from "./user.controller";
 
 
 const router=Router();
+//user 
 router.post('/', userController.createUser);
 router.get('/',userController.createGetAll )
 router.get('/:id',userController.createGetSingle )
